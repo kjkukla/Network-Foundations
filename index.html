@@ -1,16 +1,17 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Prosumer NAS & Home-Network Troubleshooting Guide</title>
 
-  <!---- Mermaid loader (GitHub Pages renders this automatically) -->
+  <!-- Load Mermaid so GitHub Pages can render the flow-chart -->
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 
-  <!---- Minimal styling for legibility only –->
+  <!-- Minimal styling for legibility; replace with your framework if desired -->
   <style>
     :root { font-family: system-ui, sans-serif; line-height: 1.4; }
-    body   { margin: 0 auto; max-width: 880px; padding: 1.5rem; }
+    body  { margin: 0 auto; max-width: 880px; padding: 1.5rem; }
     header, footer, nav, section, article, aside { margin-block: 1.5rem; }
     h1, h2, h3, h4 { line-height: 1.2; }
     nav ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem; }
@@ -19,8 +20,8 @@
     th, td { border: 1px solid #ccc; padding: .4rem .6rem; vertical-align: top; }
     th     { background: #f0f8ff; }
     code   { background: #f7f7f7; padding: .1rem .25rem; border-radius: .25rem; }
-    details { margin-block: 1rem; }
-    figure  { margin: 0; }
+    details{ margin-block: 1rem; }
+    figure { margin: 0; }
     .sr-only { position: absolute; left: -9999px; }
   </style>
 </head>
@@ -96,7 +97,7 @@ flowchart TD
 
     <!-- 3.1 SMART check -->
     <section id="smart">
-      <h3>3.1 Perform a SMART check (<abbr title="approximately">≈</abbr> 3&nbsp;min)</h3>
+      <h3>3.1 Perform a SMART check (<abbr title="approximately">≈</abbr> 3 min)</h3>
       <table>
         <thead><tr><th>Pre-conditions</th><th>Tools</th><th>Success</th></tr></thead>
         <tbody><tr>
@@ -111,7 +112,7 @@ flowchart TD
         <li>Select the suspect drive → <strong>Manual Test</strong>.</li>
         <li>Choose <strong>Short test</strong> (&lt; 10 min) → <strong>Start</strong>.</li>
         <li>Refresh; confirm <strong>Overall Status = PASSED</strong>.</li>
-        <li>If status = FAILED, label the drive and continue to <a href="#diagnostics">3.3&nbsp;Run on-box diagnostics</a>.</li>
+        <li>If status = FAILED, label the drive and continue to <a href="#diagnostics">3.3 Run on-box diagnostics</a>.</li>
       </ol>
 
       <aside>
@@ -121,7 +122,7 @@ flowchart TD
 
     <!-- 3.2 Acknowledge disk error -->
     <section id="acknowledge">
-      <h3>3.2 Acknowledge disk error (1&nbsp;min)</h3>
+      <h3>3.2 Acknowledge disk error (1 min)</h3>
       <ol>
         <li>Click the <strong>Alerts</strong> bell → select the unhealthy-drive alert → <strong>Acknowledge</strong>.</li>
         <li>Record the drive’s serial, bay #, and date in your maintenance log.</li>
@@ -133,15 +134,15 @@ flowchart TD
       <h3>3.3 Run on-box diagnostics (5 min active)</h3>
       <ol>
         <li><code>ssh admin@nas.local</code></li>
-        <li><code>smartctl -t long /dev/sdX</code> (runs ~2 h in background)</li>
-        <li><code>zpool status -v tank</code> → look for read/write/checksum errors.</li>
-        <li>If only the tagged drive shows errors, proceed to <a href="#replace">3.5&nbsp;Replace drive</a>.</li>
+        <li><code>smartctl -t long /dev/sdX</code> (runs ≈ 2 h in background)</li>
+        <li><code>zpool status -v tank</code> → check for read/write/checksum errors.</li>
+        <li>If only the tagged drive shows errors, proceed to <a href="#replace">3.5 Replace drive</a>.</li>
       </ol>
     </section>
 
     <!-- 3.4 Search -->
     <section id="search">
-      <h3>3.4 Search trusted guides (2&nbsp;min)</h3>
+      <h3>3.4 Search trusted guides (2 min)</h3>
       <p>If diagnostics point to a controller or cable fault:</p>
       <ul>
         <li>Synology KB # <strong>Replace-disk-procedures</strong></li>
@@ -164,7 +165,7 @@ flowchart TD
 
     <!-- 3.6 Verify -->
     <section id="verify">
-      <h3>3.6 Verify &amp; monitor (3&nbsp;min)</h3>
+      <h3>3.6 Verify &amp; monitor (3 min)</h3>
       <ul>
         <li>Confirm <code>pool status = ONLINE (0 errors)</code>.</li>
         <li>Re-enable scheduled SMART tests and email alerts.</li>
@@ -172,7 +173,6 @@ flowchart TD
       </ul>
     </section>
 
-    <!-- 3.7 / 3.8 optional -->
   </article>
 
   <!-- ============================================================ -->
@@ -245,7 +245,7 @@ flowchart TD
         <dd>
           <ol>
             <li><code>ssh</code> → <code>zfs list</code> to identify the bloated dataset.</li>
-            <li>Preview snapshot removal:<br><code>zfs destroy -nv tank/backups/@snap-oldest</code></li>
+            <li>Preview oldest snapshot removal:<br><code>zfs destroy -nv tank/backups/@snap-oldest</code></li>
             <li>If OK, destroy snapshot; set a <code>zfs quota</code> as buffer.</li>
           </ol>
         </dd>
@@ -312,12 +312,15 @@ flowchart TD
 
   </main>
 
-  <!-- FOOTER -->
+  <!-- ============================================================ -->
+  <!--  FOOTER                                                      -->
+  <!-- ============================================================ -->
   <footer>
     <p>© 2025 Network Foundations Team – PTW 330 / University of Washington</p>
   </footer>
 
-  <!-- Initialise Mermaid once -->
+  <!-- Initialise Mermaid -->
   <script>mermaid.initialize({ startOnLoad: true });</script>
 </body>
 </html>
+```
