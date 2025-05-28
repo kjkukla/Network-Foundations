@@ -2,324 +2,398 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Prosumer NAS & Home-Network Troubleshooting Guide</title>
+  <title>Prosumer NAS &amp; Home-Network Troubleshooting Guide</title>
 
-  <!-- Load Mermaid so GitHub Pages can render the flow-chart -->
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-
-  <!-- Minimal styling for legibility; replace with your framework if desired -->
+  <!-- Minimal styling for legibility only; swap in your CSS or framework -->
   <style>
-    :root { font-family: system-ui, sans-serif; line-height: 1.4; }
-    body  { margin: 0 auto; max-width: 880px; padding: 1.5rem; }
-    header, footer, nav, section, article, aside { margin-block: 1.5rem; }
+    :root { font-family: system-ui, sans-serif; line-height: 1.45; color: #111; }
+    body { margin: 2rem; }
     h1, h2, h3, h4 { line-height: 1.2; }
-    nav ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem; }
-    nav a  { text-decoration: none; padding: .2rem .6rem; border-radius: .25rem; background: #eef; }
-    table  { width: 100%; border-collapse: collapse; margin-block: 1rem; }
-    th, td { border: 1px solid #ccc; padding: .4rem .6rem; vertical-align: top; }
-    th     { background: #f0f8ff; }
-    code   { background: #f7f7f7; padding: .1rem .25rem; border-radius: .25rem; }
-    details{ margin-block: 1rem; }
-    figure { margin: 0; }
-    .sr-only { position: absolute; left: -9999px; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    th, td { border: 1px solid #ccc; padding: 0.4rem 0.6rem; vertical-align: top; }
+    th { background: #f5f5f5; text-align: left; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; }
+    pre { background: #f9f9f9; padding: 0.8rem; overflow-x: auto; }
+    details { margin: 0.5rem 0; }
   </style>
 </head>
 
 <body>
-  <!-- ============================================================ -->
-  <!--  HEADER / DOC-CONTROL                                        -->
-  <!-- ============================================================ -->
-  <header>
-    <h1>Prosumer NAS &amp; Home-Network Troubleshooting Guide</h1>
-    <p><strong>Version:</strong> 0.2   <strong>Last updated:</strong> 2025-05-18</p>
-    <p><strong>Authors:</strong> Lylium Walsh · Kevin Kukla · John Paul Tran · Greg Martinez</p>
-  </header>
 
-  <!-- ============================================================ -->
-  <!--  NAVIGATION                                                  -->
-  <!-- ============================================================ -->
-  <nav aria-label="Table of contents">
-    <ul>
-      <li><a href="#purpose">Purpose</a></li>
-      <li><a href="#flow">Quick-start flowchart</a></li>
-      <li><a href="#troubleshooting">Troubleshooting</a></li>
-      <li><a href="#checklist">Preventive checklist</a></li>
-      <li><a href="#cases">Case studies</a></li>
-      <li><a href="#appendix">Appendix</a></li>
-      <li><a href="#glossary">Glossary</a></li>
-    </ul>
-  </nav>
+<!-- 0 · Document control ---------------------------------------------------->
+<section id="document-control">
+  <h1>Prosumer NAS &amp; Home-Network Troubleshooting Guide</h1>
 
-  <main>
+  <table>
+    <thead>
+      <tr><th scope="col">Field</th><th scope="col">Value</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Title</td><td>Prosumer NAS &amp; Home-Network Troubleshooting Guide</td></tr>
+      <tr><td>Authors</td><td>Walsh &bull; Kukla &bull; Tran &bull; Martinez</td></tr>
+      <tr><td>Last updated</td><td>May&nbsp;19,&nbsp;2025</td></tr>
+    </tbody>
+  </table>
+</section>
 
-  <!-- ============================================================ -->
-  <!--  PURPOSE / SCOPE                                             -->
-  <!-- ============================================================ -->
-  <section id="purpose">
-    <h2>1 · Purpose &amp; scope</h2>
-    <p>Provide intermediate “prosumer” admins with a <span style="white-space: nowrap;">15-minute</span>
-       path to diagnose and resolve the most common disk-health or connectivity
-       failures on a TrueNAS-based home lab—without data loss and without trawling
-       multiple forums for answers.</p>
-  </section>
+<!-- 1 · Purpose & scope ----------------------------------------------------->
+<section id="purpose-scope">
+  <h2>1 · Purpose&nbsp;&amp;&nbsp;scope</h2>
+  <p>Provide intermediate prosumer admins with a 15-minute path to diagnose and fix the most common “disk-health” outage on a TrueNAS-based home lab—without data loss and without hunting multiple forums for answers.</p>
+</section>
 
-  <!-- ============================================================ -->
-  <!--  QUICK-START FLOWCHART                                       -->
-  <!-- ============================================================ -->
-  <section id="flow">
-    <h2>2 · Quick-start flowchart</h2>
+<!-- 2 · Quick-start flowchart ---------------------------------------------->
+<!-- 1 ▸  Load Mermaid once (add in <head> if you haven’t already) -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 
-    <figure>
-      <div class="mermaid">
+<!-- 2 ▸  Flow-chart rendered by Mermaid -->
+<figure>
+  <div class="mermaid">
 flowchart TD
-    A[Alert: Drive unhealthy] --> B{Can NAS still mount pool?}
+    A[Alert: Drive unhealthy] --> B{{Can NAS still mount pool?}}
     B -- Yes --> C[Step 1 · Perform SMART<br/>check]
     B -- No  --> D[Step 2 · Acknowledge<br/>disk error]
-    C --> E{SMART passed?}
+    C --> E{{SMART passed?}}
     E -- Yes --> G[Step 6 · Verify &amp; monitor]
     E -- No  --> F[Step 3 · Run on-box<br/>diagnostics]
-    F --> H{Drive removable?}
+    F --> H{{Drive removable?}}
     H -- Yes --> I[Step 5 · Apply fix –<br/>replace drive]
     H -- No  --> J[Step 4 · Search trusted<br/>guides]
     I --> G
     J --> G
-      </div>
-      <figcaption class="sr-only">Drive-health decision flow for quick reference.</figcaption>
-    </figure>
-  </section>
+  </div>
+  <figcaption class="sr-only">
+    Quick-start flow-chart: alert → SMART → diagnostics → replace / verify
+  </figcaption>
+</figure>
 
-  <!-- ============================================================ -->
-  <!--  TROUBLESHOOTING WORKFLOW                                    -->
-  <!-- ============================================================ -->
-  <article id="troubleshooting">
-    <h2>3 · Step-by-step troubleshooting</h2>
 
-    <!-- 3.1 SMART check -->
-    <section id="smart">
-      <h3>3.1 Perform a SMART check (<abbr title="approximately">≈</abbr> 3 min)</h3>
-      <table>
-        <thead><tr><th>Pre-conditions</th><th>Tools</th><th>Success</th></tr></thead>
-        <tbody><tr>
-          <td>Pool online;<br>TrueNAS UI reachable</td>
-          <td>Web browser or <code>smartctl</code></td>
-          <td>SMART short test returns <strong>PASSED</strong></td>
-        </tr></tbody>
-      </table>
+<!-- 3 · Step-by-step troubleshooting --------------------------------------->
+<section id="troubleshooting">
+  <h2>3 · Step-by-step troubleshooting</h2>
+  <p>Each task block follows an <strong>Action → Result</strong> pattern; users see only what they must do next. Detailed theory lives in call-out “Why?” panels or the Glossary.</p>
 
-      <ol>
-        <li>Open <strong>Storage → Disks</strong> in TrueNAS.</li>
-        <li>Select the suspect drive → <strong>Manual Test</strong>.</li>
-        <li>Choose <strong>Short test</strong> (&lt; 10 min) → <strong>Start</strong>.</li>
-        <li>Refresh; confirm <strong>Overall Status = PASSED</strong>.</li>
-        <li>If status = FAILED, label the drive and continue to <a href="#diagnostics">3.3 Run on-box diagnostics</a>.</li>
-      </ol>
-
-      <aside>
-        <p><strong>Why SMART?</strong> SMART (Self-Monitoring, Analysis &amp; Reporting Technology) is the drive firmware’s early-warning system. Treat any failure as a “replace soon” signal.</p>
-      </aside>
-    </section>
-
-    <!-- 3.2 Acknowledge disk error -->
-    <section id="acknowledge">
-      <h3>3.2 Acknowledge disk error (1 min)</h3>
-      <ol>
-        <li>Click the <strong>Alerts</strong> bell → select the unhealthy-drive alert → <strong>Acknowledge</strong>.</li>
-        <li>Record the drive’s serial, bay #, and date in your maintenance log.</li>
-      </ol>
-    </section>
-
-    <!-- 3.3 Diagnostics -->
-    <section id="diagnostics">
-      <h3>3.3 Run on-box diagnostics (5 min active)</h3>
-      <ol>
-        <li><code>ssh admin@nas.local</code></li>
-        <li><code>smartctl -t long /dev/sdX</code> (runs ≈ 2 h in background)</li>
-        <li><code>zpool status -v tank</code> → check for read/write/checksum errors.</li>
-        <li>If only the tagged drive shows errors, proceed to <a href="#replace">3.5 Replace drive</a>.</li>
-      </ol>
-    </section>
-
-    <!-- 3.4 Search -->
-    <section id="search">
-      <h3>3.4 Search trusted guides (2 min)</h3>
-      <p>If diagnostics point to a controller or cable fault:</p>
-      <ul>
-        <li>Synology KB # <strong>Replace-disk-procedures</strong></li>
-        <li>iX-Systems Docs → <strong>Hardware-guide</strong></li>
-        <li>ServeTheHome forum tag → <strong>zfs-disk-replacement</strong></li>
-      </ul>
-    </section>
-
-    <!-- 3.5 Replace -->
-    <section id="replace">
-      <h3>3.5 Apply fix – replace drive (10 min active / 8 h resilver)</h3>
-      <ol>
-        <li><code>zpool offline tank sdX</code></li>
-        <li>Power down; swap in a same-size-or-larger drive.</li>
-        <li>Boot; verify BIOS detects new drive.</li>
-        <li><code>zpool replace tank sdX /dev/sdY</code></li>
-        <li>Monitor <code>zpool status -v</code> until resilver completes.</li>
-      </ol>
-    </section>
-
-    <!-- 3.6 Verify -->
-    <section id="verify">
-      <h3>3.6 Verify &amp; monitor (3 min)</h3>
-      <ul>
-        <li>Confirm <code>pool status = ONLINE (0 errors)</code>.</li>
-        <li>Re-enable scheduled SMART tests and email alerts.</li>
-        <li>Remove the temporary bay label.</li>
-      </ul>
-    </section>
-
-  </article>
-
-  <!-- ============================================================ -->
-  <!--  PREVENTIVE CHECKLIST                                        -->
-  <!-- ============================================================ -->
-  <section id="checklist">
-    <h2>4 · Preventive best-practice checklist</h2>
-    <table>
-      <thead><tr><th>Task</th><th>Frequency</th><th>Reference</th></tr></thead>
-      <tbody>
-        <tr><td>SMART short test</td><td>Daily</td><td><a href="#smart">§ 3.1</a></td></tr>
-        <tr><td>SMART long test</td><td>Monthly</td><td><a href="#diagnostics">§ 3.3</a></td></tr>
-        <tr><td>Email alert verification</td><td>Quarterly</td><td><em>Appendix A</em></td></tr>
-        <tr><td>UPS runtime test</td><td>6-monthly</td><td>Vendor manual</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <!-- ============================================================ -->
-  <!--  CASE STUDIES                                                -->
-  <!-- ============================================================ -->
-  <section id="cases">
-    <h2>5 · Illustrative case studies</h2>
-
-    <!-- Case 1 -->
-    <article>
-      <h3>Case 1 – Partner away; NAS down</h3>
-      <dl>
-        <dt>Situation</dt><dd>Elliot is travelling; spouse Jules notices Plex can’t see the NAS.</dd>
-        <dt>Symptom</dt><dd>NAS LEDs flashing red; network shares offline.</dd>
-        <dt>Immediate action</dt>
-        <dd>
-          <ol>
-            <li>Press <strong>INFO</strong> on NAS to read bay status.</li>
-            <li>If bay shows <em>FAIL / MISSING</em>, tape-label it.</li>
-            <li>Run <a href="#smart">SMART check</a>; if UI unreachable, jump to <a href="#acknowledge">§ 3.2</a>.</li>
-            <li>SMS a photo of the alert panel to Elliot.</li>
-          </ol>
-        </dd>
-        <dt>Result</dt><dd>Services fail over to cloud backup; Elliot decides on remote reboot or drive swap.</dd>
-        <dt>Preventive tip</dt><dd>Add Jules’ email to alert list.</dd>
-      </dl>
-    </article>
-
-    <!-- Case 2 -->
-    <article>
-      <h3>Case 2 – Admin arrives home to a critical alert</h3>
-      <dl>
-        <dt>Situation</dt><dd>“Unhealthy drive” banner in TrueNAS.</dd>
-        <dt>Symptom</dt><dd><code>Reallocated_Sector_Ct &gt; 0</code></dd>
-        <dt>Immediate action</dt>
-        <dd>
-          <ol>
-            <li>Run <a href="#smart">§ 3.1</a>; expect failure.</li>
-            <li>Proceed to <a href="#diagnostics">§ 3.3</a>.</li>
-            <li>If only one drive is bad, perform <a href="#replace">§ 3.5</a>.</li>
-            <li>Monitor resilver; validate in <a href="#verify">§ 3.6</a>.</li>
-          </ol>
-        </dd>
-        <dt>Preventive tip</dt><dd>Keep one spare drive in stock to cut MTTR.</dd>
-      </dl>
-    </article>
-
-    <!-- Case 3 -->
-    <article>
-      <h3>Case 3 – Disk full during backup window</h3>
-      <dl>
-        <dt>Situation</dt><dd>Email alert: Pool capacity &gt; 90 %.</dd>
-        <dt>Immediate action</dt>
-        <dd>
-          <ol>
-            <li><code>ssh</code> → <code>zfs list</code> to identify the bloated dataset.</li>
-            <li>Preview oldest snapshot removal:<br><code>zfs destroy -nv tank/backups/@snap-oldest</code></li>
-            <li>If OK, destroy snapshot; set a <code>zfs quota</code> as buffer.</li>
-          </ol>
-        </dd>
-        <dt>Preventive tip</dt><dd>Enable auto-snapshot pruning (7 daily / 4 weekly).</dd>
-      </dl>
-    </article>
-
-    <!-- Case 4 -->
-    <article>
-      <h3>Case 4 – Network throughput suddenly slow</h3>
-      <dl>
-        <dt>Situation</dt><dd>Copy speed &lt; 5 MB/s; Zoom stutters.</dd>
-        <dt>Symptom</dt><dd>UniFi port negotiates at 100 Mb/s (amber).</dd>
-        <dt>Immediate action</dt>
-        <dd>
-          <ol>
-            <li>Reseat cable; if no change, swap in spare Cat 6.</li>
-            <li>Move cable to alternate switch port.</li>
-            <li><code>iperf3 -c nas.local</code>; expect ≥ 900 Mb/s.</li>
-          </ol>
-        </dd>
-        <dt>Preventive tip</dt><dd>Label cables with colour-coded Velcro wraps.</dd>
-      </dl>
-    </article>
-  </section>
-
-  <!-- ============================================================ -->
-  <!--  APPENDIX                                                    -->
-  <!-- ============================================================ -->
-  <section id="appendix">
-    <h2>6 · Appendix A – Hardware concepts at a glance</h2>
-
-    <details>
-      <summary>RAID levels &amp; use-cases</summary>
-      <ul>
-        <li><strong>JBOD</strong> – capacity only; no redundancy.</li>
-        <li><strong>RAID 0</strong> – striping for speed; zero fault tolerance.</li>
-        <li><strong>RAID 5</strong> – one-disk parity; most common home-lab setup.</li>
-      </ul>
-    </details>
-
-    <details>
-      <summary>Drive classes</summary>
-      <p><strong>WD Blue</strong> – consumer; <strong>Gold</strong> – enterprise; <strong>Seagate IronWolf</strong> – NAS-optimised.</p>
-    </details>
-  </section>
-
-  <!-- ============================================================ -->
-  <!--  GLOSSARY                                                    -->
-  <!-- ============================================================ -->
-  <section id="glossary">
-    <h2>7 · Glossary</h2>
+  <!-- 3.1 Perform short SMART check -->
+  <section id="smart-short">
+    <h3>3.1 · Perform short SMART check&nbsp;(≈ 3 min)</h3>
 
     <table>
-      <thead><tr><th>Term</th><th>Definition</th></tr></thead>
       <tbody>
-        <tr><th>NAS</th><td>Network-attached storage; a file-server appliance on the LAN.</td></tr>
-        <tr><th>SMART</th><td>Self-Monitoring, Analysis &amp; Reporting Tech; firmware health metrics.</td></tr>
-        <tr><th>RAID 5</th><td>Striped + parity array; survives one drive failure.</td></tr>
-        <tr><th>UPS</th><td>Uninterruptible Power Supply; keeps NAS safely online during outages.</td></tr>
+        <tr><th scope="row">Pre-conditions</th><td>Pool is online; SSH enabled or Web UI reachable</td></tr>
+        <tr><th scope="row">Tools</th><td>Web browser (TrueNAS UI) or <code>smartctl</code> via SSH</td></tr>
+        <tr><th scope="row">Success</th><td>SMART short test returns <em>PASSED</em> for every attribute</td></tr>
       </tbody>
     </table>
+
+    <ol>
+      <li>Open a web browser and go to the TrueNAS UI console.</li>
+      <li>From the sidebar, select <strong>Storage → Disks</strong>.</li>
+      <li>Select the drive you want to test.</li>
+      <li>Select <strong>Manual Test → Run Short SMART Test</strong> (default 2 min).</li>
+      <li>Refresh after the test finishes and confirm the SMART test passed.</li>
+      <li>If the status is <em>FAILED</em> or any attribute exceeds threshold, tag the drive with masking tape and go to <a href="#acknowledge-error">Section 3.2</a>.</li>
+      <li>If the status is <em>SUCCESS</em>, skip to <a href="#verify-monitor">Section 3.6</a>.</li>
+    </ol>
   </section>
 
-  </main>
+  <!-- 3.2 Acknowledge disk error -->
+  <section id="acknowledge-error">
+    <h3>3.2 · Acknowledge disk error&nbsp;(≈ 1 min)</h3>
+    <ol>
+      <li>Select <strong>Alerts → Unhealthy-drive Notification → Acknowledge</strong> to silence repeated notifications.</li>
+      <li>Note the drive serial, bay #, and date in a logbook or wiki.</li>
+    </ol>
+  </section>
 
-  <!-- ============================================================ -->
-  <!--  FOOTER                                                      -->
-  <!-- ============================================================ -->
-  <footer>
-    <p>© 2025 Network Foundations Team – PTW 330 / University of Washington</p>
-  </footer>
+  <!-- 3.3 Run diagnostics -->
+  <section id="diagnostics">
+    <h3>3.3 · Run diagnostics&nbsp;(≈ 5 min)</h3>
 
-  <!-- Initialise Mermaid -->
-  <script>mermaid.initialize({ startOnLoad: true });</script>
+    <p>Securely connect with SSH into the NAS server:</p>
+    <pre><code>ssh admin@nas.local</code></pre>
+
+    <p>Run a long SMART test:</p>
+    <pre><code>sudo smartctl -t long /dev/sdX</code></pre>
+    <p>⚠ This can take between 2–22&nbsp;hours depending on disk size.</p>
+
+    <p>Check for read/write/cksum errors:</p>
+    <pre><code>zpool status -v tank</code></pre>
+
+    <p>If errors appear only on the tagged drive, proceed to <a href="#replace-drive">Section 3.5</a>.</p>
+  </section>
+
+  <!-- 3.4 Search trusted guides -->
+  <section id="trusted-guides">
+    <h3>3.4 · Search trusted guides&nbsp;(≈ 2 min)</h3>
+    <p>If diagnostics point to something other than the drive (e.g., controller or cable), consult:</p>
+    <ul>
+      <li>Synology KB #: <em>Replace-disk procedures</em></li>
+      <li>iX-Systems documentation: <em>TrueNAS hardware guide</em></li>
+      <li>ServeTheHome forum tag: <em>zfs-disk-replacement</em></li>
+    </ul>
+  </section>
+
+  <!-- 3.5 Replace drive -->
+  <section id="replace-drive">
+    <h3>3.5 · Replace drive&nbsp;(≈ 10 min&nbsp;active / 8 h resilver)</h3>
+
+    <p>Replace the faulty drive with a new one of equal or larger capacity:</p>
+    <ol>
+      <li>Set the drive to <strong>Offline</strong>.</li>
+      <li>SSH into the NAS and execute:<br>
+        <pre><code>zpool offline tank sdX</code></pre>
+      </li>
+      <li>Power down the chassis and switch off the PSU.</li>
+      <li>Physically remove the faulty drive and insert the replacement.</li>
+      <li>Boot the NAS and verify the BIOS detects the new drive.</li>
+      <li>Replace the drive in ZFS:<br>
+        <pre><code>zpool replace tank sdX /dev/sdY</code></pre>
+      </li>
+      <li>Monitor resilvering:<br>
+        <pre><code>zpool status -v</code></pre>
+        Continue until the process completes.</li>
+    </ol>
+  </section>
+
+  <!-- 3.6 Verify & monitor -->
+  <section id="verify-monitor">
+    <h3>3.6 · Verify &amp; monitor&nbsp;(≈ 3 min)</h3>
+    <ul>
+      <li>Confirm pool status = <strong>ONLINE</strong> (0 errors).</li>
+      <li>Re-enable scheduled SMART tests and email alerts.</li>
+    </ul>
+  </section>
+</section>
+
+<!-- 4 · Preventive best-practices ----------------------------------------->
+<section id="preventive">
+  <h2>4 · Preventive best practices&nbsp;(check-list)</h2>
+
+  <table>
+    <thead>
+      <tr><th scope="col">Task</th><th scope="col">Frequency</th><th scope="col">How-to reference</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Short SMART test</td><td>Daily</td><td>Section 3.1</td></tr>
+      <tr><td>Long SMART test</td><td>Monthly</td><td>Section 3.3</td></tr>
+      <tr><td>Email alerts</td><td>Quarterly verification</td><td>Appendix A</td></tr>
+      <tr><td>UPS runtime test</td><td>Every 6 months</td><td>Vendor manual</td></tr>
+      <tr><td>Label new cables</td><td>On install</td><td>Appendix C</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 5 · Case studies ------------------------------------------------------->
+<section id="case-studies">
+  <h2>5 · Case studies</h2>
+
+  <!-- 5.1 Non-expert user -->
+  <section id="case-5-1">
+    <h3>5.1 · Non-expert user troubleshoots NAS outage</h3>
+    <p><strong>Situation:</strong> Elliot is travelling. His spouse, Jules, notices Plex can’t find the media library and the NAS LEDs are flashing red.</p>
+    <p><strong>Key symptom:</strong> Front LCD shows <code>POOL OFFLINE</code>; network shares are not visible.</p>
+    <p><strong>Immediate action:</strong></p>
+    <ol>
+      <li>Press <kbd>INFO</kbd> on NAS → read drive-bay status.</li>
+      <li>If one bay shows <em>FAIL / MISSING</em>, tape-label it “Do Not Use”.</li>
+      <li>Open <a href="#smart-short">Section 3.1</a> from a laptop on the same LAN. If UI unreachable, go to <a href="#acknowledge-error">Section 3.2</a>.</li>
+      <li>Send Elliot a photo of the screen plus drive serial/tag.</li>
+    </ol>
+    <p><strong>Result:</strong> Jules keeps working via cloud backups; Elliot decides remotely whether a reboot or drive swap (<a href="#replace-drive">3.5</a>) is required.</p>
+    <p><strong>Preventive tip:</strong> Add Jules’ email to alert targets (Appendix A) so she receives health notices when Elliot is away.</p>
+  </section>
+
+  <!-- 5.2 Primary admin -->
+  <section id="case-5-2">
+    <h3>5.2 · Primary admin receives critical alert</h3>
+    <p><strong>Situation:</strong> Elliot returns to an <em>Unhealthy drive</em> banner in TrueNAS.</p>
+    <p><strong>Key symptom:</strong> SMART attribute <code>Reallocated_Sector_Ct&nbsp;&gt;&nbsp;0</code>.</p>
+    <p><strong>Immediate action:</strong></p>
+    <ol>
+      <li>Repeat <a href="#smart-short">Section 3.1</a>; expect <em>FAILED</em>.</li>
+      <li>Proceed to <a href="#diagnostics">Section 3.3</a>.</li>
+      <li>If only that drive shows errors, go to <a href="#replace-drive">Section 3.5</a>.</li>
+      <li>Monitor resilver (<a href="#verify-monitor">3.6</a>) until pool reports ONLINE.</li>
+    </ol>
+    <p><strong>Result:</strong> Degraded disk replaced before data loss; all services auto-resume.</p>
+    <p><strong>Preventive tip:</strong> Keep one spare drive of matching capacity on-hand.</p>
+  </section>
+
+  <!-- 5.3 Backup job fails -->
+  <section id="case-5-3">
+    <h3>5.3 · Backup job fails due to full disk</h3>
+    <p><strong>Situation:</strong> Overnight Time-Machine job fails; email: <em>Pool capacity &gt; 90 %</em>.</p>
+    <p><strong>Key symptom:</strong> Backups pause; reads OK, writes blocked.</p>
+    <p><strong>Immediate action:</strong></p>
+    <ol>
+      <li><code>zfs list</code> to verify dataset usage.</li>
+      <li>Identify largest dataset (often <code>/backups</code>).</li>
+      <li>Preview snapshot removal:<br>
+        <code>zfs destroy -nv tank/backups/@snap-oldest</code></li>
+      <li>If space needed, destroy the snapshot; set temporary quota:<br>
+        <code>zfs set quota=100G tank/backups</code></li>
+    </ol>
+    <p><strong>Result:</strong> Pool drops below 80 %; backup resumes next cycle.</p>
+    <p><strong>Preventive tip:</strong> Enable auto-snapshot pruning (7 daily / 4 weekly) and set email alert threshold to 80 %.</p>
+  </section>
+
+  <!-- 5.4 Cable / switch issues -->
+  <section id="case-5-4">
+    <h3>5.4 · Cables or switch throttle network speeds</h3>
+    <p><strong>Situation:</strong> Zoom calls stutter; file copies to NAS &lt;&nbsp;5 MB/s (normal 110 MB/s).</p>
+    <p><strong>Key symptom:</strong> UniFi topology shows NAS port at 100 Mb/s.</p>
+    <p><strong>Immediate action:</strong></p>
+    <ol>
+      <li>Reseat both ends of NAS ↔ switch cable.</li>
+      <li>Swap in labelled spare Cat 6; refresh UniFi UI.</li>
+      <li>If still 100 Mb/s, move cable to another switch port.</li>
+      <li>Run <code>iperf3 -c nas.local</code>; expect ≥ 900 Mb/s.</li>
+    </ol>
+    <p><strong>Result:</strong> Link renegotiates at 1 Gb/s; throughput restored.</p>
+    <p><strong>Preventive tip:</strong> Add colour-coded Velcro wraps and update the network diagram whenever ports change.</p>
+  </section>
+</section>
+
+<!-- 6 · Appendix A – Alerts ----------------------------------------------->
+<section id="appendix-a">
+  <h2>6 · Appendix A – Alerts</h2>
+  <p>In TrueNAS you can configure email alerts for drive health events.</p>
+
+  <h3>Set up email alerts</h3>
+  <ol>
+    <li>Click the bell icon (top-right) to open the alerts panel.</li>
+    <li>Click the gear icon (top-right) and choose <strong>SMTP</strong> or <strong>Gmail</strong>.</li>
+    <li>Fill in the required fields (SMTP server, sender name, or Gmail login).</li>
+    <li>Send a test email to confirm configuration.</li>
+    <li>Click <strong>Save</strong>.</li>
+  </ol>
+
+  <h3>Component-specific alert settings</h3>
+  <ol>
+    <li>Open the alerts panel and click the gear icon.</li>
+    <li>Choose <strong>Alert Settings</strong>.</li>
+    <li>Select a <strong>Category</strong> (component).</li>
+    <li>Adjust <em>Warning Level</em> and <em>Frequency</em> as required.</li>
+  </ol>
+</section>
+
+<!-- 7 · Appendix B – SMART -------------------------------------------------->
+<section id="appendix-b">
+  <h2>7 · Appendix B – SMART</h2>
+
+  <h3>7.1 · What is a SMART test?</h3>
+  <p>SMART (Self-Monitoring, Analysis &amp; Reporting Technology) is a firmware-level early-warning system for HDD/SSD wear. It is predictive, not diagnostic; treat failures as “replace soon” signals.</p>
+
+  <h3>7.2 · SMART test types</h3>
+  <table>
+    <thead>
+      <tr><th scope="col">Test type</th><th scope="col">Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Long</td><td>Scans the entire disk; can take many hours on large drives.</td></tr>
+      <tr><td>Short</td><td>Verifies basic health; usually completes in &lt; 10 minutes.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 8 · Appendix C – Cable management -------------------------------------->
+<section id="appendix-c">
+  <h2>8 · Appendix C – Cable management</h2>
+  <p>Good cable management helps:</p>
+  <ul>
+    <li>Perform physical maintenance</li>
+    <li>Identify drives</li>
+    <li>Maintain clean airflow / orderly racks</li>
+  </ul>
+
+  <h3>Tools</h3>
+  <table>
+    <thead>
+      <tr><th scope="col">Tool</th><th scope="col">Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Labels</td><td>Mark cable endpoints to speed tracing during maintenance.</td></tr>
+      <tr><td>Modular PSU</td><td>Use only the cables you need; reduces clutter.</td></tr>
+      <tr><td>Velcro straps</td><td>Reusable bundling; easy to reposition.</td></tr>
+      <tr><td>Zip ties</td><td>Permanent bundling; trim excess for neatness.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>General tips</h3>
+  <ul>
+    <li>Map each cable’s path from PSU or motherboard to its component.</li>
+    <li>Bundle cables that share the same route.</li>
+    <li>Run cables along chassis edges to keep the workspace clear.</li>
+  </ul>
+</section>
+
+<!-- 9 · Appendix D – Network diagram --------------------------------------->
+<section id="appendix-d">
+  <h2>9 · Appendix D – Network diagram</h2>
+<!-- 3 ▸  Static network diagram (SVG / PNG stored in your repo) -->
+<figure>
+  <!-- Replace path with the actual file location in your repository -->
+  <img src="assets/network-diagram.svg"
+       alt="Logical network layout: ISP ONT → Gateway → Switch → NAS → Clients"
+       style="max-width:100%;border:1px solid #ccc;">
+  <figcaption>Figure X — Home-lab network diagram.</figcaption>
+</figure>
+</section>
+
+<!-- 10 · Appendix E – Command cheat sheet ---------------------------------->
+<section id="appendix-e">
+  <h2>10 · Appendix E – Command cheat sheet</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Command</th>
+        <th scope="col">Description</th>
+        <th scope="col">Examples</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><code>cd</code></td><td>Change working directory</td><td><code>cd ~/MyFolder</code><br><code>cd ../MyOtherFolder</code></td></tr>
+      <tr><td><code>cp</code></td><td>Copy file</td><td><code>cp ~/MyFolder/MyFile ./OtherFolder</code></td></tr>
+      <tr><td><code>curl</code></td><td>Transfer data</td><td><code>curl -u user:pwd 'ftp://mysite/myfile' -o ~/Downloads</code></td></tr>
+      <tr><td><code>mv</code></td><td>Move / rename file</td><td><code>mv Original.txt New.txt</code></td></tr>
+      <tr><td><code>ping</code></td><td>Test connectivity</td><td><code>ping google.com</code></td></tr>
+      <tr><td><code>rm</code></td><td>Remove file/folder</td><td><code>rm -rf ~/MyFolder</code></td></tr>
+      <tr><td><code>smartctl</code></td><td>Run SMART test</td><td><code>smartctl -t long /dev/sdX</code></td></tr>
+      <tr><td><code>ssh</code></td><td>Secure shell</td><td><code>ssh user@host -p 22 -i id_file</code></td></tr>
+      <tr><td><code>zpool offline</code></td><td>Offline drive</td><td><code>zpool offline tank sdX</code></td></tr>
+      <tr><td><code>zpool replace</code></td><td>Replace drive</td><td><code>zpool replace tank sdX /dev/sdY</code></td></tr>
+      <tr><td><code>zpool status</code></td><td>Check pool</td><td><code>zpool status -v</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 11 · Appendix F – Glossary --------------------------------------------->
+<section id="appendix-f">
+  <h2>11 · Appendix F – Glossary</h2>
+
+  <table>
+    <thead>
+      <tr><th scope="col">Term</th><th scope="col">Definition</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Gateway</td><td>A device that bridges two networks.</td></tr>
+      <tr><td>Hard disk drive&nbsp;(HDD)</td><td>Electro-mechanical magnetic storage device.</td></tr>
+      <tr><td>Network Attached Storage&nbsp;(NAS)</td><td>File-storage server connected to a network.</td></tr>
+      <tr><td>Network File System&nbsp;(NFS)</td><td>Protocol letting a computer access files over a network.</td></tr>
+      <tr><td>Optical Network Terminal&nbsp;(ONT)</td><td>Device that connects to an ISP's fiber-optic network.</td></tr>
+      <tr><td>Pool</td><td>Collection of drives acting as one storage unit.</td></tr>
+      <tr><td>Power Supply Unit&nbsp;(PSU)</td><td>Converts AC to DC power for devices.</td></tr>
+      <tr><td>Redundant Array of Independent Disks&nbsp;(RAID)</td><td>Combines multiple drives for performance / redundancy.</td></tr>
+      <tr><td>Self-Monitoring, Analysis &amp; Reporting Technology&nbsp;(SMART)</td><td>Drive health monitoring system.</td></tr>
+      <tr><td>Server</td><td>Computer that provides centralized resources.</td></tr>
+      <tr><td>Server Message Block&nbsp;(SMB)</td><td>File-sharing protocol.</td></tr>
+      <tr><td>Solid-state drive&nbsp;(SSD)</td><td>Storage device using integrated circuits.</td></tr>
+      <tr><td>Switch</td><td>Connects multiple network devices.</td></tr>
+      <tr><td>Uninterruptible Power Supply&nbsp;(UPS)</td><td>Instant backup power source.</td></tr>
+    </tbody>
+  </table>
+</section>
+
 </body>
 </html>
-```
